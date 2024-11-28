@@ -1,6 +1,10 @@
 package top.fyypumpkin.manager;
 
-import org.apache.commons.vfs2.*;
+import lombok.Getter;
+import org.apache.commons.vfs2.FileListener;
+import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.vfs2.FileSystemManager;
+import org.apache.commons.vfs2.VFS;
 import org.apache.commons.vfs2.impl.DefaultFileMonitor;
 import top.fyypumpkin.bridge.IApplication;
 import top.fyypumpkin.common.Constants;
@@ -17,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author fyypumpkin on 6/28/19
  */
+@Getter
 public class ApplicationManager implements IFileChangeCallBack {
     private Map<String, IApplication> apps = new ConcurrentHashMap<>();
     private final ClassLoaderFactory loaderFactory = new ClassLoaderFactory();
@@ -29,7 +34,7 @@ public class ApplicationManager implements IFileChangeCallBack {
     }
 
     private void loadApplication() {
-        // 将 app load 进来
+        // 将 app load 进来 (SPI)
         ServiceLoader<IApplication> loader = ServiceLoader.load(IApplication.class);
         for (IApplication iApplication : loader) {
             System.out.print(iApplication.getApplicationName() + ": use ");
@@ -52,7 +57,6 @@ public class ApplicationManager implements IFileChangeCallBack {
             this.fileMonitor.setRecursive(true);
             this.fileMonitor.addFile(monitoredDir);
             this.fileMonitor.start();
-
             System.out.println("started listen " + monitoredDir.getName().getPath());
         } catch (Exception e) {
             System.out.println("started failed ");

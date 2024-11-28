@@ -18,7 +18,7 @@ public class Application2 implements IApplication {
 
     @Override
     public void execute() {
-
+        System.out.println("Application2 success execute");
     }
 
     @Override
